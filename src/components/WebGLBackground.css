@@ -1,0 +1,16 @@
+/* ── WebGL canvas — pinned behind everything ── */
+.webgl-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.webgl-bg canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}

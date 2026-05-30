@@ -1,0 +1,323 @@
+/* ── Section ── */
+.pricing {
+  position: relative;
+  z-index: var(--z-content);
+  padding-block: clamp(5rem, 10vw, 9rem);
+  background: rgba(15, 15, 24, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.pricing__top-rule {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent, var(--c-cyan), transparent);
+  opacity: 0.3;
+}
+
+/* ── Header ── */
+.pricing__head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.pricing__head .s-title {
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+}
+
+.pricing__head .s-sub {
+  max-width: 44ch;
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+/* ── Toggle ── */
+.pricing__toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  gap: 0;
+}
+
+.pricing__toggle-slider {
+  position: absolute;
+  top: 4px; left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: var(--c-surface);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-full);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pricing__toggle-btn {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.45rem 1.25rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--c-text-faint);
+  border-radius: var(--radius-full);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.pricing__toggle-btn--active {
+  color: var(--c-white);
+}
+
+.pricing__toggle-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.15em 0.5em;
+  background: rgba(0,255,157,0.1);
+  color: var(--c-green);
+  border: 1px solid rgba(0,255,157,0.2);
+  border-radius: var(--radius-full);
+}
+
+/* ── Card grid ── */
+.pricing__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* ── Pricing card ── */
+.price__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-xl);
+  padding: 2.25rem;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.price__card:hover {
+  border-color: rgba(255,255,255,0.12);
+}
+
+.price__card--highlight {
+  border-color: rgba(0,212,255,0.25);
+  background: var(--c-surface-2);
+}
+
+.price__card--highlight:hover {
+  border-color: rgba(0,212,255,0.4);
+}
+
+/* Cursor glow */
+.price__card-cursor-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: var(--radius-xl);
+}
+
+/* Popular badge */
+.price__card-badge {
+  position: absolute;
+  top: -1px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #000;
+  background: var(--c-cyan);
+  padding: 0.3em 1em;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+/* Card top */
+.price__card-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.price__card-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--c-text-faint);
+}
+
+/* Price display */
+.price__card-price {
+  min-height: 3.5rem;
+  display: flex;
+  align-items: flex-end;
+}
+
+.price__card-price-inner {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.1rem;
+  line-height: 1;
+}
+
+.price__card-currency {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--c-text-dim);
+  align-self: flex-start;
+  margin-top: 0.4rem;
+}
+
+.price__card-num {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--c-white);
+  line-height: 1;
+}
+
+.price__card-period {
+  font-size: var(--text-sm);
+  color: var(--c-text-faint);
+  margin-bottom: 0.3rem;
+}
+
+.price__card-custom {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--c-white);
+  line-height: 1;
+}
+
+.price__card-desc {
+  font-size: var(--text-sm);
+  color: var(--c-text-dim);
+  line-height: 1.6;
+}
+
+/* Divider */
+.price__card-rule {
+  height: 1px;
+  background: var(--c-border);
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Features list */
+.price__card-features {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  margin-bottom: 2rem;
+}
+
+.price__feat {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: var(--text-sm);
+  color: var(--c-text-dim);
+  line-height: 1.5;
+}
+
+.price__feat-check {
+  font-size: 0.7rem;
+  color: var(--c-cyan);
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  display: inline-block;
+}
+
+/* CTA button */
+.price__cta {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+/* Highlight glow */
+.price__card-glow {
+  position: absolute;
+  bottom: -40px; right: -40px;
+  width: 250px; height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(0,212,255,0.08), transparent 65%);
+  pointer-events: none;
+  filter: blur(40px);
+  z-index: 0;
+}
+
+/* Note */
+.pricing__note {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--c-text-faint);
+  margin-top: var(--space-8);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .pricing__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .price__card:last-child {
+    grid-column: span 2;
+    max-width: 480px;
+    margin-inline: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .pricing__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price__card:last-child {
+    grid-column: span 1;
+    max-width: 100%;
+  }
+}
