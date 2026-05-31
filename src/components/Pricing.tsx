@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { memo, useCallback, useRef, useState } from 'react'
 import {
   motion,
   useInView,
@@ -60,7 +60,7 @@ const PLANS = [
   },
 ]
 
-function PricingCard({
+const PricingCard = memo(function PricingCard({
   plan, index, annual,
 }: {
   plan: typeof PLANS[0]
@@ -70,6 +70,17 @@ function PricingCard({
   const cardRef = useRef<HTMLDivElement>(null)
   const rawX    = useMotionValue(0)
   const rawY    = useMotionValue(0)
+
+  const handleMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current!.getBoundingClientRect()
+    rawX.set((e.clientX - rect.left) / rect.width  - 0.5)
+    rawY.set((e.clientY - rect.top)  / rect.height - 0.5)
+  }, [rawX, rawY])
+
+  const handleLeave = useCallback(() => {
+    rawX.set(0)
+    rawY.set(0)
+  }, [rawX, rawY])
 
   const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [6, -6]),  { stiffness: 280, damping: 26 })
   const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-8, 8]),  { stiffness: 280, damping: 26 })
@@ -103,19 +114,15 @@ function PricingCard({
     <motion.div
       ref={cardRef}
       className={`price__card ${plan.highlight ? 'price__card--highlight' : ''}`}
-      onMouseMove={e => {
-        const r = cardRef.current!.getBoundingClientRect()
-        rawX.set((e.clientX - r.left) / r.width  - 0.5)
-        rawY.set((e.clientY - r.top)  / r.height - 0.5)
-      }}
-      onMouseLeave={() => { rawX.set(0); rawY.set(0) }}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
       style={{
         rotateX,
         rotateY,
         transformStyle: 'preserve-3d',
         transformPerspective: 1000,
       }}
-      initial={{ opacity: 0, y: 60, filter: 'blur(10px)' }}
+      initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.85, delay: index * 0.13, ease: EASE_OUT }}
@@ -216,13 +223,16 @@ function PricingCard({
       {plan.highlight && <div className="price__card-glow" aria-hidden="true" />}
     </motion.div>
   )
-}
+})
 
-export default function Pricing() {
+const Pricing = memo(function Pricing() {
   const sectionRef = useRef<HTMLElement>(null)
   const headRef    = useRef<HTMLDivElement>(null)
   const inView     = useInView(headRef, { once: true, margin: '-80px' })
   const [annual, setAnnual] = useState(false)
+
+  const setMonthly = useCallback(() => setAnnual(false), [])
+  const setYearly = useCallback(() => setAnnual(true), [])
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -237,7 +247,7 @@ export default function Pricing() {
         <motion.div
           ref={headRef}
           className="pricing__head"
-          initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
+          initial={{ opacity: 0, y: 50, filter: 'blur(8px)' }}
           animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
           transition={{ duration: 1, ease: EASE_OUT }}
         >
@@ -254,12 +264,12 @@ export default function Pricing() {
             />
             <button
               className={`pricing__toggle-btn ${!annual ? 'pricing__toggle-btn--active' : ''}`}
-              onClick={() => setAnnual(false)}
+              onClick={setMonthly}
               aria-pressed={!annual}
             >Monthly</button>
             <button
               className={`pricing__toggle-btn ${annual ? 'pricing__toggle-btn--active' : ''}`}
-              onClick={() => setAnnual(true)}
+              onClick={setYearly}
               aria-pressed={annual}
             >
               Annual
@@ -289,4 +299,6 @@ export default function Pricing() {
       </div>
     </section>
   )
-}
+})
+
+export default Pricing

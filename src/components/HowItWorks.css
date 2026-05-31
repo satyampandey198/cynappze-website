@@ -4,8 +4,8 @@
   z-index: var(--z-content);
   padding-block: clamp(5rem, 10vw, 9rem);
   background: rgba(10, 10, 15, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
 }
 
@@ -18,7 +18,7 @@
   background: radial-gradient(ellipse,
     rgba(0,212,255,0.05) 0%, transparent 65%);
   pointer-events: none;
-  filter: blur(120px);
+  filter: blur(8px);
   z-index: 0;
 }
 
@@ -259,7 +259,7 @@
   background: radial-gradient(circle,
     rgba(0,212,255,0.06), transparent 65%);
   pointer-events: none;
-  filter: blur(40px);
+  filter: blur(8px);
 }
 
 /* ── Responsive ── */

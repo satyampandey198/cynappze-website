@@ -26,7 +26,6 @@
 .cursor-dot--btn {
   width: 8px; height: 8px;
   background: #ffffff;
-  box-shadow: 0 0 12px rgba(0,212,255,0.8);
 }
 
 /* Ring */
@@ -50,6 +49,6 @@
 }
 
 /* Hide on touch/mobile */
-@media (hover: none) {
+@media (hover: none), (pointer: coarse) {
   .cursor-dot, .cursor-ring { display: none; }
 }

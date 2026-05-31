@@ -1,49 +1,70 @@
-import { useRef, useMemo, useEffect } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { memo, useEffect, useMemo, useRef } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import './WebGLBackground.css'
 
-// ── All random data generated ONCE at module level (outside component) ──
-const PARTICLE_COUNT = 1200
-const NODE_COUNT     = 90
-
-// Particles
-const _particlePositions = new Float32Array(PARTICLE_COUNT * 3)
-const _particleSpeeds    = new Float32Array(PARTICLE_COUNT)
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  _particlePositions[i * 3]     = (Math.random() - 0.5) * 22
-  _particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 14
-  _particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 10
-  _particleSpeeds[i] = 0.002 + Math.random() * 0.006
+type ParticleData = {
+  count: number
+  positions: Float32Array
+  speeds: Float32Array
 }
 
-const _particleSizes = new Float32Array(PARTICLE_COUNT)
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  _particleSizes[i] = 0.5 + Math.random() * 2.5
+type NetworkData = {
+  lineSegArray: Float32Array
 }
 
-// Network nodes + line segments
-const _nodePositions = new Float32Array(NODE_COUNT * 3)
-for (let i = 0; i < NODE_COUNT; i++) {
-  _nodePositions[i * 3]     = (Math.random() - 0.5) * 20
-  _nodePositions[i * 3 + 1] = (Math.random() - 0.5) * 12
-  _nodePositions[i * 3 + 2] = (Math.random() - 0.5) * 6
+type PerfSettings = {
+  particleCount: number
+  particleSize: number
+  nodeCount: number
+  maxConnections: number
+  maxDistance: number
+  dpr: number
+  canvasScale: number
 }
-const _lineSegs: number[] = []
-for (let a = 0; a < NODE_COUNT; a++) {
-  for (let b = a + 1; b < NODE_COUNT; b++) {
-    const dx = _nodePositions[a*3]   - _nodePositions[b*3]
-    const dy = _nodePositions[a*3+1] - _nodePositions[b*3+1]
-    const dz = _nodePositions[a*3+2] - _nodePositions[b*3+2]
-    if (Math.sqrt(dx*dx + dy*dy + dz*dz) < 2.6) {
-      _lineSegs.push(
-        _nodePositions[a*3], _nodePositions[a*3+1], _nodePositions[a*3+2],
-        _nodePositions[b*3], _nodePositions[b*3+1], _nodePositions[b*3+2],
+
+function createParticles(count: number): ParticleData {
+  const positions = new Float32Array(count * 3)
+  const speeds    = new Float32Array(count)
+  for (let i = 0; i < count; i++) {
+    positions[i * 3]     = (Math.random() - 0.5) * 22
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 14
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10
+    speeds[i] = 0.002 + Math.random() * 0.006
+  }
+  return { count, positions, speeds }
+}
+
+function createNetwork(nodeCount: number, maxDistance: number, maxConnections: number): NetworkData {
+  const nodePositions = new Float32Array(nodeCount * 3)
+  for (let i = 0; i < nodeCount; i++) {
+    nodePositions[i * 3]     = (Math.random() - 0.5) * 20
+    nodePositions[i * 3 + 1] = (Math.random() - 0.5) * 12
+    nodePositions[i * 3 + 2] = (Math.random() - 0.5) * 6
+  }
+
+  const lineSegs: number[] = []
+  const connectionCounts = new Uint8Array(nodeCount)
+  const maxDistSq = maxDistance * maxDistance
+
+  for (let a = 0; a < nodeCount; a++) {
+    for (let b = a + 1; b < nodeCount; b++) {
+      if (connectionCounts[a] >= maxConnections || connectionCounts[b] >= maxConnections) continue
+      const dx = nodePositions[a * 3]     - nodePositions[b * 3]
+      const dy = nodePositions[a * 3 + 1] - nodePositions[b * 3 + 1]
+      const dz = nodePositions[a * 3 + 2] - nodePositions[b * 3 + 2]
+      if ((dx * dx + dy * dy + dz * dz) > maxDistSq) continue
+      connectionCounts[a] += 1
+      connectionCounts[b] += 1
+      lineSegs.push(
+        nodePositions[a * 3],     nodePositions[a * 3 + 1], nodePositions[a * 3 + 2],
+        nodePositions[b * 3],     nodePositions[b * 3 + 1], nodePositions[b * 3 + 2],
       )
     }
   }
+
+  return { lineSegArray: new Float32Array(lineSegs) }
 }
-const _lineSegArray = new Float32Array(_lineSegs)
 
 // ── Shared mouse/scroll state ──
 const state = {
@@ -53,47 +74,51 @@ const state = {
 
 function useGlobalEvents() {
   useEffect(() => {
+    let scrollRaf = 0
     const onMove = (e: MouseEvent) => {
       state.mouse.x =  (e.clientX / window.innerWidth)  * 2 - 1
       state.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
     }
-    const onScroll = () => {
+    const updateScroll = () => {
+      scrollRaf = 0
       const max = document.body.scrollHeight - window.innerHeight
       state.scroll = max > 0 ? window.scrollY / max : 0
     }
-    window.addEventListener('mousemove', onMove,   { passive: true })
-    window.addEventListener('scroll',    onScroll, { passive: true })
+    const onScroll = () => {
+      if (scrollRaf) return
+      scrollRaf = requestAnimationFrame(updateScroll)
+    }
+    window.addEventListener('mousemove', onMove, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => {
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('scroll',    onScroll)
+      if (scrollRaf) cancelAnimationFrame(scrollRaf)
     }
   }, [])
 }
 
 // ── Particle Field ──
-function ParticleField() {
+const ParticleField = memo(function ParticleField({ data, size }: { data: ParticleData; size: number }) {
   const meshRef = useRef<THREE.Points>(null!)
-  const frameRef = useRef(0)
 
   // Copy positions so mutations don't affect the original
-  const positions = useMemo(() => new Float32Array(_particlePositions), [])
-  const speeds    = _particleSpeeds
+  const positions = useMemo(() => new Float32Array(data.positions), [data.positions])
+  const speeds    = data.speeds
+  const count     = data.count
 
   const geo = useMemo(() => {
     const g = new THREE.BufferGeometry()
     g.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    g.setAttribute('size',     new THREE.BufferAttribute(_particleSizes, 1))
     return g
   }, [positions])
 
   useFrame(({ clock }) => {
-    frameRef.current = (frameRef.current + 1) % 2
-    if (frameRef.current !== 0) return
     const pts = meshRef.current
     if (!pts) return
     const pos = pts.geometry.attributes.position.array as Float32Array
     const t   = clock.getElapsedTime()
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
+    for (let i = 0; i < count; i++) {
       pos[i * 3 + 1] += speeds[i] * 0.4
       pos[i * 3]     += Math.sin(t * speeds[i] * 3 + i) * 0.003
       if (pos[i * 3 + 1] > 7) pos[i * 3 + 1] = -7
@@ -107,32 +132,29 @@ function ParticleField() {
   return (
     <points ref={meshRef} geometry={geo}>
       <pointsMaterial
-        size={0.028}
+        size={size}
         color="#00d4ff"
         transparent
         opacity={0.55}
-        sizeAttenuation
+        sizeAttenuation={false}
         depthWrite={false}
         blending={THREE.AdditiveBlending}
       />
     </points>
   )
-}
+})
 
 // ── Network Lines ──
-function NetworkLines() {
+const NetworkLines = memo(function NetworkLines({ data }: { data: NetworkData }) {
   const ref = useRef<THREE.LineSegments>(null!)
-  const frameRef = useRef(0)
 
   const geo = useMemo(() => {
     const g = new THREE.BufferGeometry()
-    g.setAttribute('position', new THREE.BufferAttribute(_lineSegArray, 3))
+    g.setAttribute('position', new THREE.BufferAttribute(data.lineSegArray, 3))
     return g
-  }, [])
+  }, [data.lineSegArray])
 
   useFrame(({ clock }) => {
-    frameRef.current = (frameRef.current + 1) % 2
-    if (frameRef.current !== 0) return
     if (!ref.current) return
     const t = clock.getElapsedTime()
     ref.current.rotation.y = t * 0.014 + state.mouse.x * 0.06
@@ -152,10 +174,10 @@ function NetworkLines() {
       />
     </lineSegments>
   )
-}
+})
 
 // ── Liquid Sphere ──
-function LiquidSphere() {
+const LiquidSphere = memo(function LiquidSphere() {
   const meshRef = useRef<THREE.Mesh>(null!)
   const matRef  = useRef<THREE.ShaderMaterial>(null!)
 
@@ -241,33 +263,104 @@ function LiquidSphere() {
       />
     </mesh>
   )
-}
+})
+
+const PerformanceController = memo(function PerformanceController({ dpr, canvasScale }: { dpr: number; canvasScale: number }) {
+  const { gl, setFrameloop, invalidate } = useThree()
+
+  useEffect(() => {
+    let resizeRaf = 0
+    const applySize = () => {
+      resizeRaf = 0
+      gl.setPixelRatio(dpr)
+      gl.setSize(window.innerWidth * canvasScale, window.innerHeight * canvasScale, false)
+    }
+    const onResize = () => {
+      if (resizeRaf) return
+      resizeRaf = requestAnimationFrame(applySize)
+    }
+    applySize()
+    window.addEventListener('resize', onResize, { passive: true })
+    return () => {
+      window.removeEventListener('resize', onResize)
+      if (resizeRaf) cancelAnimationFrame(resizeRaf)
+    }
+  }, [canvasScale, dpr, gl])
+
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.hidden) {
+        setFrameloop('never')
+      } else {
+        setFrameloop('always')
+        invalidate()
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
+  }, [invalidate, setFrameloop])
+
+  return null
+})
 
 // ── Scene ──
-function Scene() {
+const Scene = memo(function Scene({ particleData, networkData, particleSize }: {
+  particleData: ParticleData
+  networkData: NetworkData
+  particleSize: number
+}) {
   useGlobalEvents()
   return (
     <>
       <ambientLight intensity={0.1} />
-      <ParticleField />
-      <NetworkLines />
+      <ParticleField data={particleData} size={particleSize} />
+      <NetworkLines data={networkData} />
       <LiquidSphere />
     </>
   )
-}
+})
 
 // ── Export ──
-export default function WebGLBackground() {
+const WebGLBackground = memo(function WebGLBackground() {
+  const isLowEnd = useMemo(() => {
+    if (typeof window === 'undefined') return true
+    return navigator.hardwareConcurrency <= 4
+      || !window.matchMedia('(min-resolution: 2dppx)').matches
+  }, [])
+
+  const settings = useMemo<PerfSettings>(() => ({
+    particleCount:  isLowEnd ? 80 : 180,
+    particleSize:   isLowEnd ? 1.2 : 1.8,
+    nodeCount:      isLowEnd ? 70 : 140,
+    maxConnections: isLowEnd ? 3 : 5,
+    maxDistance:    isLowEnd ? 80 : 150,
+    dpr:            isLowEnd ? Math.min(window.devicePixelRatio, 1) : Math.min(window.devicePixelRatio, 2),
+    canvasScale:    isLowEnd ? 0.75 : 1,
+  }), [isLowEnd])
+
+  const particleData = useMemo(() => createParticles(settings.particleCount), [settings.particleCount])
+  const networkData  = useMemo(
+    () => createNetwork(settings.nodeCount, settings.maxDistance, settings.maxConnections),
+    [settings.maxConnections, settings.maxDistance, settings.nodeCount],
+  )
+
   return (
     <div className="webgl-bg" aria-hidden="true">
       <Canvas
         camera={{ position: [0, 0, 8], fov: 60 }}
-        gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
-        dpr={[1, 1]}
+        gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
+        dpr={settings.dpr}
         style={{ background: 'transparent' }}
       >
-        <Scene />
+        <PerformanceController dpr={settings.dpr} canvasScale={settings.canvasScale} />
+        <Scene
+          particleData={particleData}
+          networkData={networkData}
+          particleSize={settings.particleSize}
+        />
       </Canvas>
     </div>
   )
-}
+})
+
+export default WebGLBackground

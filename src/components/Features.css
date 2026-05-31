@@ -4,8 +4,8 @@
   z-index: var(--z-content);
   padding-block: clamp(5rem, 10vw, 9rem);
   background: rgba(15, 15, 24, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
 }
 
@@ -69,10 +69,8 @@
 /* Stat box */
 .features__stat {
   padding: 1.75rem;
-  border: 1px solid var(--c-border);
-  background: rgba(19, 19, 30, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   gap: 0.4rem;

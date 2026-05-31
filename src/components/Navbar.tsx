@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './Navbar.css'
 
@@ -9,22 +9,39 @@ const LINKS = [
   { label: 'Pricing',      href: '#pricing'       },
 ]
 
-export default function Navbar({ logo }: { logo: React.ReactNode }) {
+const Navbar = memo(function Navbar({ logo }: { logo: React.ReactNode }) {
   const [scrolled,     setScrolled]     = useState(false)
   const [mobileOpen,   setMobileOpen]   = useState(false)
   const [activeLink,   setActiveLink]   = useState('')
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    let raf = 0
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        setScrolled(window.scrollY > 40)
+      })
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [])
 
-  const handleNav = (href: string) => {
+  const handleNav = useCallback((href: string) => {
     setActiveLink(href)
     setMobileOpen(false)
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [])
+
+  const handleNavClick = useCallback((href: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    handleNav(href)
+  }, [handleNav])
+
+  const toggleMobile = useCallback(() => setMobileOpen(p => !p), [])
 
   return (
     <>
@@ -41,7 +58,7 @@ export default function Navbar({ logo }: { logo: React.ReactNode }) {
           <a
             href="#home"
             className="navbar__brand"
-            onClick={e => { e.preventDefault(); handleNav('#home') }}
+            onClick={e => handleNavClick('#home', e)}
             aria-label="Cogniaris home"
           >
             {logo}
@@ -55,7 +72,7 @@ export default function Navbar({ logo }: { logo: React.ReactNode }) {
                 <a
                   href={link.href}
                   className={`navbar__link ${activeLink === link.href ? 'navbar__link--active' : ''}`}
-                  onClick={e => { e.preventDefault(); handleNav(link.href) }}
+                  onClick={e => handleNavClick(link.href, e)}
                 >
                   {link.label}
                 </a>
@@ -66,14 +83,14 @@ export default function Navbar({ logo }: { logo: React.ReactNode }) {
           {/* Desktop CTA */}
           <div className="navbar__actions">
             <a href="#pricing" className="btn-ghost"
-              onClick={e => { e.preventDefault(); handleNav('#pricing') }}
+              onClick={e => handleNavClick('#pricing', e)}
             >
               Sign In
             </a>
             <motion.a
               href="#pricing"
               className="btn-primary"
-              onClick={e => { e.preventDefault(); handleNav('#pricing') }}
+              onClick={e => handleNavClick('#pricing', e)}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
@@ -85,7 +102,7 @@ export default function Navbar({ logo }: { logo: React.ReactNode }) {
           {/* Hamburger */}
           <button
             className={`navbar__hamburger ${mobileOpen ? 'navbar__hamburger--open' : ''}`}
-            onClick={() => setMobileOpen(p => !p)}
+            onClick={toggleMobile}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
           >
@@ -109,7 +126,7 @@ export default function Navbar({ logo }: { logo: React.ReactNode }) {
                 key={link.href}
                 href={link.href}
                 className="navbar__mobile-link"
-                onClick={e => { e.preventDefault(); handleNav(link.href) }}
+                onClick={e => handleNavClick(link.href, e)}
                 initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{
@@ -124,7 +141,7 @@ export default function Navbar({ logo }: { logo: React.ReactNode }) {
             <motion.a
               href="#pricing"
               className="btn-primary"
-              onClick={e => { e.preventDefault(); handleNav('#pricing') }}
+              onClick={e => handleNavClick('#pricing', e)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.25, duration: 0.35 }}
@@ -137,4 +154,6 @@ export default function Navbar({ logo }: { logo: React.ReactNode }) {
       </AnimatePresence>
     </>
   )
-}
+})
+
+export default Navbar

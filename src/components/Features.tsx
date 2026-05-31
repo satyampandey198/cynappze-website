@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import {
   motion,
   useInView,
@@ -50,23 +50,25 @@ const MARQUEE_ITEMS = [
   'OBSERVABILITY','AUTO-SCALING','ZERO LOCK-IN',
 ]
 
-function AnimatedCounter({ to }: { to: number }) {
+const AnimatedCounter = memo(function AnimatedCounter({ to }: { to: number }) {
   const ref    = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true })
   const raw    = useMotionValue(0)
   const spring = useSpring(raw, { stiffness: 60, damping: 20 })
   const display = useTransform(spring, v => Math.round(v))
 
-  if (inView) spring.set(to)
+  useEffect(() => {
+    if (inView) spring.set(to)
+  }, [inView, spring, to])
 
   return (
     <span ref={ref}>
       <motion.span>{display}</motion.span>%
     </span>
   )
-}
+})
 
-function FeatureRow({ feature, index }: { feature: typeof FEATURES[0]; index: number }) {
+const FeatureRow = memo(function FeatureRow({ feature, index }: { feature: typeof FEATURES[0]; index: number }) {
   return (
     <motion.li
       className={`feat__item ${feature.highlight ? 'feat__item--highlight' : ''}`}
@@ -89,9 +91,9 @@ function FeatureRow({ feature, index }: { feature: typeof FEATURES[0]; index: nu
       >↗</motion.span>
     </motion.li>
   )
-}
+})
 
-export default function Features() {
+const Features = memo(function Features() {
   const sectionRef = useRef<HTMLElement>(null)
   const leftRef    = useRef<HTMLDivElement>(null)
   const leftView   = useInView(leftRef, { once: true, margin: '-80px' })
@@ -126,7 +128,7 @@ export default function Features() {
             ref={leftRef}
             className="features__left"
             style={{ y: leftY }}
-            initial={{ opacity: 0, y: 60, filter: 'blur(12px)' }}
+            initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
             animate={leftView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
             transition={{ duration: 1, ease: EASE_OUT }}
           >
@@ -170,4 +172,6 @@ export default function Features() {
       </div>
     </section>
   )
-}
+})
+
+export default Features

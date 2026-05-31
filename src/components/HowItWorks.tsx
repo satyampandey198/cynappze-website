@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import {
   motion,
   useInView,
@@ -63,10 +63,12 @@ console.log(deployment.url)
   },
 ]
 
-export default function HowItWorks() {
+const HowItWorks = memo(function HowItWorks() {
   const sectionRef = useRef<HTMLElement>(null)
   const headRef    = useRef<HTMLDivElement>(null)
   const inView     = useInView(headRef, { once: true, margin: '-80px' })
+
+  const copyTimeoutRef = useRef<number | null>(null)
 
   const [active, setActive] = useState(0)
   const [copied, setCopied] = useState(false)
@@ -85,12 +87,21 @@ export default function HowItWorks() {
     return () => clearInterval(t)
   }, [])
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(STEPS[active].code).then(() => {
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      if (copyTimeoutRef.current) window.clearTimeout(copyTimeoutRef.current)
+      copyTimeoutRef.current = window.setTimeout(() => setCopied(false), 2000)
     })
-  }
+  }, [active])
+
+  const handleStep = useCallback((index: number) => setActive(index), [])
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) window.clearTimeout(copyTimeoutRef.current)
+    }
+  }, [])
 
   const stepVariants: Variants = {
     hidden:  {},
@@ -112,7 +123,7 @@ export default function HowItWorks() {
         <motion.div
           ref={headRef}
           className="hiw__header"
-          initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
+          initial={{ opacity: 0, y: 50, filter: 'blur(8px)' }}
           animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
           transition={{ duration: 1, ease: EASE_OUT }}
         >
@@ -136,7 +147,7 @@ export default function HowItWorks() {
                 <motion.li
                   key={s.num}
                   className={`hiw__step ${active === i ? 'hiw__step--active' : ''}`}
-                  onClick={() => setActive(i)}
+                  onClick={() => handleStep(i)}
                   variants={stepItem}
                   whileHover={{ x: active === i ? 0 : 6 }}
                   transition={{ duration: 0.2 }}
@@ -196,7 +207,7 @@ export default function HowItWorks() {
           <motion.div
             className="hiw__panel"
             style={{ y: rightY, rotateX: panelRotate }}
-            initial={{ opacity: 0, y: 60, filter: 'blur(12px)' }}
+            initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.9, delay: 0.2, ease: EASE_OUT }}
@@ -264,7 +275,7 @@ export default function HowItWorks() {
                 <motion.button
                   key={i}
                   className="hiw__pip"
-                  onClick={() => setActive(i)}
+                  onClick={() => handleStep(i)}
                   animate={{
                     width:      i === active ? 40 : 20,
                     background: i === active ? 'var(--c-cyan)' : 'var(--c-text-faint)',
@@ -282,4 +293,6 @@ export default function HowItWorks() {
       </div>
     </section>
   )
-}
+})
+
+export default HowItWorks

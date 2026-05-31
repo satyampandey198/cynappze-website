@@ -216,8 +216,8 @@ button { cursor: pointer; background: none; border: none; }
 
 /* ── Keyframes (global) ── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); filter: blur(8px); }
-  to   { opacity: 1; transform: translateY(0);    filter: blur(0px); }
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes shimmer {
@@ -226,8 +226,8 @@ button { cursor: pointer; background: none; border: none; }
 }
 
 @keyframes scroll-drop {
-  0%   { top: -100%; }
-  100% { top: 100%;  }
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
 }
 
 @keyframes scanline {

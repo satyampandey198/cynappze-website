@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import viteCompression from 'vite-plugin-compression'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), viteCompression()],
   css: {
     transformer: 'postcss',
   },
@@ -10,18 +11,20 @@ export default defineConfig({
     allowedHosts: ['justness-dinner-conclude.ngrok-free.dev'],
   },
   build: {
-    cssMinify: false,
+    minify: 'terser',
+    cssMinify: true,
+    target: 'esnext',
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) return 'react-vendor'
-            if (id.includes('three') || id.includes('@react-three')) return 'three-vendor'
-            if (id.includes('framer-motion')) return 'motion-vendor'
-          }
-          return undefined
-        },
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+        } as Record<string, string[]>,
+      },
+    },
+    terserOptions: {
+      compress: {
+        drop_console: true,
       },
     },
   },

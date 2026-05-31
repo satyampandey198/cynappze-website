@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import {
   motion,
   useScroll,
@@ -14,8 +14,15 @@ const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1]
 const EASE_IN:  [number, number, number, number] = [0.55, 0, 1, 0.45]
 
 const ROTATING_WORDS = ['Agents', 'Pipelines', 'Fine-Tuning', 'RAG', 'Inference']
+const AVATARS = [
+  'https://randomuser.me/api/portraits/men/32.jpg',
+  'https://randomuser.me/api/portraits/women/44.jpg',
+  'https://randomuser.me/api/portraits/men/68.jpg',
+  'https://randomuser.me/api/portraits/women/26.jpg',
+  'https://randomuser.me/api/portraits/men/75.jpg',
+]
 
-export default function Hero() {
+const Hero = memo(function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const [wordIdx, setWordIdx] = useState(0)
 
@@ -44,14 +51,15 @@ export default function Hero() {
     return () => clearInterval(t)
   }, [])
 
+  const onMove = useCallback((e: MouseEvent) => {
+    mouseX.set(e.clientX / window.innerWidth)
+    mouseY.set(e.clientY / window.innerHeight)
+  }, [mouseX, mouseY])
+
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX / window.innerWidth)
-      mouseY.set(e.clientY / window.innerHeight)
-    }
     window.addEventListener('mousemove', onMove, { passive: true })
     return () => window.removeEventListener('mousemove', onMove)
-  }, [mouseX, mouseY])
+  }, [onMove])
 
   const containerVariants: Variants = {
     hidden:  {},
@@ -61,7 +69,7 @@ export default function Hero() {
   }
 
   const itemUp: Variants = {
-    hidden:  { opacity: 0, y: 48, filter: 'blur(10px)' },
+    hidden:  { opacity: 0, y: 48, filter: 'blur(8px)' },
     visible: {
       opacity: 1, y: 0, filter: 'blur(0px)',
       transition: { duration: 1.0, ease: EASE_OUT },
@@ -213,10 +221,12 @@ export default function Hero() {
             style={{ y: ctaY }}
           >
             <div className="hero__proof-avatars" aria-hidden="true">
-              {[0, 1, 2, 3, 4].map(i => (
-                <motion.div
-                  key={i}
+              {AVATARS.map((src, i) => (
+                <motion.img
+                  key={src}
                   className="hero__proof-avatar"
+                  src={src}
+                  alt="Engineer avatar"
                   initial={{ opacity: 0, scale: 0, x: -8 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   transition={{
@@ -270,4 +280,6 @@ export default function Hero() {
       </motion.div>
     </section>
   )
-}
+})
+
+export default Hero

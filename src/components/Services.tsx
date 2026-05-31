@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { memo, useCallback, useRef } from 'react'
 import {
   motion,
   useInView,
@@ -46,7 +46,7 @@ const SERVICES = [
   },
 ]
 
-function ServiceCard({
+const ServiceCard = memo(function ServiceCard({
   service,
   index,
 }: {
@@ -56,6 +56,17 @@ function ServiceCard({
   const cardRef = useRef<HTMLLIElement>(null)
   const rawX    = useMotionValue(0)
   const rawY    = useMotionValue(0)
+
+  const handleMove = useCallback((e: React.MouseEvent<HTMLLIElement>) => {
+    const rect = cardRef.current!.getBoundingClientRect()
+    rawX.set((e.clientX - rect.left) / rect.width  - 0.5)
+    rawY.set((e.clientY - rect.top)  / rect.height - 0.5)
+  }, [rawX, rawY])
+
+  const handleLeave = useCallback(() => {
+    rawX.set(0)
+    rawY.set(0)
+  }, [rawX, rawY])
 
   const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [8, -8]),   { stiffness: 300, damping: 28 })
   const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-10, 10]), { stiffness: 300, damping: 28 })
@@ -79,19 +90,15 @@ function ServiceCard({
     <motion.li
       ref={cardRef}
       className={`svc__card svc__card--${service.accent}`}
-      onMouseMove={e => {
-        const r = cardRef.current!.getBoundingClientRect()
-        rawX.set((e.clientX - r.left) / r.width  - 0.5)
-        rawY.set((e.clientY - r.top)  / r.height - 0.5)
-      }}
-      onMouseLeave={() => { rawX.set(0); rawY.set(0) }}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
       style={{
         rotateX,
         rotateY,
         transformStyle: 'preserve-3d',
         transformPerspective: 900,
       }}
-      initial={{ opacity: 0, y: 60, filter: 'blur(10px)' }}
+      initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.8, delay: index * 0.1, ease: EASE_OUT }}
@@ -130,9 +137,9 @@ function ServiceCard({
       </div>
     </motion.li>
   )
-}
+})
 
-export default function Services() {
+const Services = memo(function Services() {
   const sectionRef = useRef<HTMLElement>(null)
   const headRef    = useRef<HTMLDivElement>(null)
   const inView     = useInView(headRef, { once: true, margin: '-80px' })
@@ -197,4 +204,6 @@ export default function Services() {
       </div>
     </section>
   )
-}
+})
+
+export default Services

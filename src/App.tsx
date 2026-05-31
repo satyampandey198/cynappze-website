@@ -1,18 +1,19 @@
-import { useEffect, useState } from 'react'
+import { lazy, memo, Suspense, useCallback, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Cursor          from './components/Cursor'
 import WebGLBackground from './components/WebGLBackground'
 import Navbar          from './components/Navbar'
 import Hero            from './components/Hero'
-import Services        from './components/Services'
-import Features        from './components/Features'
-import HowItWorks      from './components/HowItWorks'
-import Pricing         from './components/Pricing'
-import Footer          from './components/Footer'
 import './App.css'
 
+const Services   = lazy(() => import('./components/Services'))
+const Features   = lazy(() => import('./components/Features'))
+const HowItWorks = lazy(() => import('./components/HowItWorks'))
+const Pricing    = lazy(() => import('./components/Pricing'))
+const Footer     = lazy(() => import('./components/Footer'))
+
 /* ── SVG Logo ── */
-function Logo({ size = 28 }: { size?: number }) {
+const Logo = memo(function Logo({ size = 28 }: { size?: number }) {
   return (
     <svg
       width={size} height={size}
@@ -33,10 +34,10 @@ function Logo({ size = 28 }: { size?: number }) {
       </defs>
     </svg>
   )
-}
+})
 
 /* ── Loader ── */
-function Loader({ onDone }: { onDone: () => void }) {
+const Loader = memo(function Loader({ onDone }: { onDone: () => void }) {
   const [pct, setPct] = useState(0)
 
   useEffect(() => {
@@ -68,10 +69,11 @@ function Loader({ onDone }: { onDone: () => void }) {
       <span className="loader__pct">{pct}%</span>
     </div>
   )
-}
+})
 
-export default function App() {
+const App = memo(function App() {
   const [loading, setLoading] = useState(true)
+  const handleDone = useCallback(() => setLoading(false), [])
 
   return (
     <div id="root">
@@ -82,11 +84,11 @@ export default function App() {
         {loading && (
           <motion.div
             key="loader"
-            exit={{ opacity: 0, filter: 'blur(12px)' }}
+            exit={{ opacity: 0, filter: 'blur(8px)' }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             style={{ position: 'fixed', inset: 0, zIndex: 999 }}
           >
-            <Loader onDone={() => setLoading(false)} />
+            <Loader onDone={handleDone} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -99,13 +101,19 @@ export default function App() {
         <Navbar logo={<Logo />} />
         <main>
           <Hero />
-          <Services />
-          <Features />
-          <HowItWorks />
-          <Pricing />
+          <Suspense fallback={null}>
+            <Services />
+            <Features />
+            <HowItWorks />
+            <Pricing />
+          </Suspense>
         </main>
-        <Footer logo={<Logo />} />
+        <Suspense fallback={null}>
+          <Footer logo={<Logo />} />
+        </Suspense>
       </div>
     </div>
   )
-}
+})
+
+export default App

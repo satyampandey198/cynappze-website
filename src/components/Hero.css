@@ -19,7 +19,7 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 0;
-  filter: blur(60px);
+  filter: blur(8px);
 }
 
 /* Perspective grid */
@@ -94,8 +94,8 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--c-cyan); }
-  50%       { opacity: 0.6; box-shadow: 0 0 16px var(--c-cyan); }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.75); }
 }
 
 .hero__badge-arrow {
@@ -201,27 +201,34 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  overflow: visible;
 }
 
 .hero__proof-avatars {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 20px;
+  overflow: visible;
 }
 
 .hero__proof-avatar {
-  width: 30px; height: 30px;
+  width: 52px; height: 52px;
   border-radius: 50%;
-  border: 2px solid var(--c-bg);
-  background: linear-gradient(135deg,
-    var(--c-surface-2) 0%, var(--c-border) 100%);
-  margin-left: -8px;
+  border: 2px solid #0d1117;
+  object-fit: cover;
+  background: #0f0f18;
+  margin-left: 0;
 }
+
+.hero__proof-avatar + .hero__proof-avatar { margin-left: -12px; }
 
 .hero__proof-avatar:last-child { margin-left: 0; }
 
 .hero__proof-text {
   font-size: var(--text-sm);
   color: var(--c-text-dim);
+  white-space: normal;
 }
 
 .hero__proof-text strong {
@@ -237,10 +244,8 @@
   align-items: center;
   padding: 0.75rem 1.25rem;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--c-border);
-  background: rgba(19, 19, 30, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.08);
   gap: 0.15rem;
   pointer-events: none;
   z-index: 2;
@@ -316,4 +321,27 @@
   .hero__title-line--flex {
     flex-wrap: wrap;
   }
+
+  .hero__proof {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    text-align: center;
+  }
+
+  .hero__proof-avatars {
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .hero__proof-text {
+    text-align: center;
+  }
+
+  .hero__proof-avatar {
+    width: 36px; height: 36px;
+    margin-left: 0;
+  }
+
+  .hero__proof-avatar + .hero__proof-avatar { margin-left: -8px; }
 }

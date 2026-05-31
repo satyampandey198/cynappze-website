@@ -4,8 +4,8 @@
   z-index: var(--z-content);
   padding-block: clamp(5rem, 10vw, 9rem);
   background: rgba(10, 10, 15, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .services__glow {
@@ -17,7 +17,7 @@
   background: radial-gradient(ellipse,
     rgba(107,92,231,0.07) 0%, transparent 70%);
   pointer-events: none;
-  filter: blur(100px);
+  filter: blur(8px);
   z-index: 0;
 }
 

@@ -4,8 +4,8 @@
   z-index: var(--z-content);
   padding-block: clamp(5rem, 10vw, 9rem);
   background: rgba(15, 15, 24, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
 }
 
@@ -42,13 +42,15 @@
 /* ── Toggle ── */
 .pricing__toggle {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   background: var(--c-surface-2);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-full);
   padding: 4px;
   gap: 0;
+  min-width: 320px;
 }
 
 .pricing__toggle-slider {
@@ -68,6 +70,7 @@
   z-index: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
   padding: 0.45rem 1.25rem;
   font-size: var(--text-sm);
@@ -79,6 +82,7 @@
   cursor: pointer;
   transition: color 0.2s ease;
   white-space: nowrap;
+  width: 100%;
 }
 
 .pricing__toggle-btn--active {
@@ -283,7 +287,7 @@
   background: radial-gradient(circle,
     rgba(0,212,255,0.08), transparent 65%);
   pointer-events: none;
-  filter: blur(40px);
+  filter: blur(8px);
   z-index: 0;
 }
 

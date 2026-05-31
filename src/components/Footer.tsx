@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { memo, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import './Footer.css'
 
@@ -8,7 +8,7 @@ const LINKS = {
   Legal:    ['Privacy', 'Terms', 'Security', 'Cookies'],
 }
 
-export default function Footer({ logo }: { logo: React.ReactNode }) {
+const Footer = memo(function Footer({ logo }: { logo: React.ReactNode }) {
   const ref    = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
@@ -113,4 +113,6 @@ export default function Footer({ logo }: { logo: React.ReactNode }) {
       </div>
     </footer>
   )
-}
+})
+
+export default Footer
