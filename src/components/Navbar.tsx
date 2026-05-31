@@ -42,10 +42,10 @@ export default function Navbar({ logo }: { logo: React.ReactNode }) {
             href="#home"
             className="navbar__brand"
             onClick={e => { e.preventDefault(); handleNav('#home') }}
-            aria-label="Cynappze home"
+            aria-label="Cogniaris home"
           >
             {logo}
-            <span className="navbar__wordmark">CYNAPPZE</span>
+            <span className="navbar__wordmark">COGNIARIS</span>
           </a>
 
           {/* Desktop links */}

@@ -16,11 +16,11 @@ const STEPS = [
   {
     num: '01', label: 'CONNECT',
     title: 'Integrate in minutes',
-    desc: 'Drop our SDK into your codebase. One API key unlocks the entire Cynappze platform — no separate credentials per service.',
-    code: `import { Cynappze } from '@cynappze/sdk'
+    desc: 'Drop our SDK into your codebase. One API key unlocks the entire Cogniaris platform — no separate credentials per service.',
+    code: `import { Cogniaris } from '@cogniaris/sdk'
 
-const ai = new Cynappze({
-  apiKey: process.env.CYNAPPZE_KEY,
+const ai = new Cogniaris({
+  apiKey: process.env.COGNIARIS_KEY,
   region: 'auto',
 })`,
   },
@@ -46,7 +46,7 @@ const ai = new Cynappze({
 })
 
 console.log(deployment.url)
-// → https://your-agent.cynappze.run`,
+// → https://your-agent.cogniaris.run`,
   },
   {
     num: '04', label: 'OBSERVE',
@@ -215,7 +215,7 @@ export default function HowItWorks() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                cynappze-sdk — step {STEPS[active].num}
+                cogniaris-sdk — step {STEPS[active].num}
               </motion.span>
               <motion.button
                 className="hiw__copy"

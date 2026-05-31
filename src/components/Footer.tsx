@@ -29,7 +29,7 @@ export default function Footer({ logo }: { logo: React.ReactNode }) {
           >
             <a href="#home" className="footer__logo">
               {logo}
-              <span className="footer__wordmark">CYNAPPZE</span>
+              <span className="footer__wordmark">COGNIARIS</span>
             </a>
             <p className="footer__tagline">
               Production-grade AI infrastructure for teams that move fast and build things that last.
@@ -102,7 +102,7 @@ export default function Footer({ logo }: { logo: React.ReactNode }) {
           transition={{ delay: 0.5, duration: 0.8 }}
         >
           <p className="footer__copy">
-            © 2026 <span>CYNAPPZE</span>. All rights reserved.
+            © 2026 <span>COGNIARIS</span>. All rights reserved.
           </p>
           <div className="footer__legal">
             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(l => (

@@ -6,15 +6,21 @@ export default defineConfig({
   css: {
     transformer: 'postcss',
   },
+  server: {
+    allowedHosts: ['justness-dinner-conclude.ngrok-free.dev'],
+  },
   build: {
     cssMinify: false,
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor':  ['react', 'react-dom'],
-          'three-vendor':  ['three', '@react-three/fiber', '@react-three/drei'],
-          'motion-vendor': ['framer-motion'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) return 'react-vendor'
+            if (id.includes('three') || id.includes('@react-three')) return 'three-vendor'
+            if (id.includes('framer-motion')) return 'motion-vendor'
+          }
+          return undefined
         },
       },
     },

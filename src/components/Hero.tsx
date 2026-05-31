@@ -165,7 +165,7 @@ export default function Hero() {
             style={{ y: subY }}
             variants={itemUp}
           >
-            Cynappze gives engineering teams a single platform to deploy AI agents,
+            Cogniaris gives engineering teams a single platform to deploy AI agents,
             fine-tune models, and run RAG pipelines — with sub-50ms latency and
             99% uptime, globally.
           </motion.p>

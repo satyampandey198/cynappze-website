@@ -130,7 +130,7 @@ export default function Features() {
             animate={leftView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
             transition={{ duration: 1, ease: EASE_OUT }}
           >
-            <span className="s-label">Why Cynappze</span>
+            <span className="s-label">Why Cogniaris</span>
             <h2 className="s-title features__title">
               Built for<br />production.<br /><em>Not demos.</em>
             </h2>

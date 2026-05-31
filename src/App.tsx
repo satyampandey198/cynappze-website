@@ -18,7 +18,7 @@ function Logo({ size = 28 }: { size?: number }) {
       width={size} height={size}
       viewBox="0 0 32 32"
       fill="none"
-      aria-label="Cynappze logo"
+      aria-label="Cogniaris logo"
     >
       <rect width="32" height="32" rx="8" fill="url(#lg)" />
       <path d="M8 16 L16 8 L24 16 L16 24 Z"
@@ -55,7 +55,7 @@ function Loader({ onDone }: { onDone: () => void }) {
     <div className="loader">
       <div className="loader__logo">
         <Logo size={36} />
-        <span className="loader__wordmark">CYNAPPZE</span>
+        <span className="loader__wordmark">COGNIARIS</span>
       </div>
       <div className="loader__bar-track">
         <motion.div

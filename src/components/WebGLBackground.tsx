@@ -4,8 +4,8 @@ import * as THREE from 'three'
 import './WebGLBackground.css'
 
 // ── All random data generated ONCE at module level (outside component) ──
-const PARTICLE_COUNT = 2800
-const NODE_COUNT     = 180
+const PARTICLE_COUNT = 1200
+const NODE_COUNT     = 90
 
 // Particles
 const _particlePositions = new Float32Array(PARTICLE_COUNT * 3)
@@ -35,7 +35,7 @@ for (let a = 0; a < NODE_COUNT; a++) {
     const dx = _nodePositions[a*3]   - _nodePositions[b*3]
     const dy = _nodePositions[a*3+1] - _nodePositions[b*3+1]
     const dz = _nodePositions[a*3+2] - _nodePositions[b*3+2]
-    if (Math.sqrt(dx*dx + dy*dy + dz*dz) < 3.2) {
+    if (Math.sqrt(dx*dx + dy*dy + dz*dz) < 2.6) {
       _lineSegs.push(
         _nodePositions[a*3], _nodePositions[a*3+1], _nodePositions[a*3+2],
         _nodePositions[b*3], _nodePositions[b*3+1], _nodePositions[b*3+2],
@@ -73,6 +73,7 @@ function useGlobalEvents() {
 // ── Particle Field ──
 function ParticleField() {
   const meshRef = useRef<THREE.Points>(null!)
+  const frameRef = useRef(0)
 
   // Copy positions so mutations don't affect the original
   const positions = useMemo(() => new Float32Array(_particlePositions), [])
@@ -86,6 +87,8 @@ function ParticleField() {
   }, [positions])
 
   useFrame(({ clock }) => {
+    frameRef.current = (frameRef.current + 1) % 2
+    if (frameRef.current !== 0) return
     const pts = meshRef.current
     if (!pts) return
     const pos = pts.geometry.attributes.position.array as Float32Array
@@ -96,9 +99,9 @@ function ParticleField() {
       if (pos[i * 3 + 1] > 7) pos[i * 3 + 1] = -7
     }
     pts.geometry.attributes.position.needsUpdate = true
-    pts.rotation.x += (state.mouse.y * 0.06 - pts.rotation.x) * 0.04
-    pts.rotation.y += (state.mouse.x * 0.08 - pts.rotation.y) * 0.04
-    pts.position.y += (state.scroll * -2 - pts.position.y) * 0.03
+    pts.rotation.x += (state.mouse.y * 0.05 - pts.rotation.x) * 0.03
+    pts.rotation.y += (state.mouse.x * 0.06 - pts.rotation.y) * 0.03
+    pts.position.y += (state.scroll * -1.5 - pts.position.y) * 0.025
   })
 
   return (
@@ -119,6 +122,7 @@ function ParticleField() {
 // ── Network Lines ──
 function NetworkLines() {
   const ref = useRef<THREE.LineSegments>(null!)
+  const frameRef = useRef(0)
 
   const geo = useMemo(() => {
     const g = new THREE.BufferGeometry()
@@ -127,12 +131,14 @@ function NetworkLines() {
   }, [])
 
   useFrame(({ clock }) => {
+    frameRef.current = (frameRef.current + 1) % 2
+    if (frameRef.current !== 0) return
     if (!ref.current) return
     const t = clock.getElapsedTime()
-    ref.current.rotation.y = t * 0.018 + state.mouse.x * 0.08
-    ref.current.rotation.x = state.mouse.y * 0.05
-    ref.current.rotation.z = t * 0.006
-    ref.current.position.y += (state.scroll * -3 - ref.current.position.y) * 0.025
+    ref.current.rotation.y = t * 0.014 + state.mouse.x * 0.06
+    ref.current.rotation.x = state.mouse.y * 0.04
+    ref.current.rotation.z = t * 0.004
+    ref.current.position.y += (state.scroll * -2 - ref.current.position.y) * 0.02
   })
 
   return (
@@ -207,7 +213,7 @@ function LiquidSphere() {
 
   const uniforms = useMemo(() => ({
     uTime:     { value: 0 },
-    uStrength: { value: 0.38 },
+    uStrength: { value: 0.28 },
   }), [])
 
   useFrame(({ clock }) => {
@@ -222,7 +228,7 @@ function LiquidSphere() {
 
   return (
     <mesh ref={meshRef} position={[3.5, 0.5, -3]}>
-      <icosahedronGeometry args={[2.4, 64]} />
+      <icosahedronGeometry args={[2.2, 24]} />
       <shaderMaterial
         ref={matRef}
         vertexShader={vertexShader}
@@ -256,8 +262,8 @@ export default function WebGLBackground() {
     <div className="webgl-bg" aria-hidden="true">
       <Canvas
         camera={{ position: [0, 0, 8], fov: 60 }}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-        dpr={[1, 1.5]}
+        gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
+        dpr={[1, 1]}
         style={{ background: 'transparent' }}
       >
         <Scene />
