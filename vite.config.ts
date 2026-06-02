@@ -11,20 +11,18 @@ export default defineConfig({
     allowedHosts: ['justness-dinner-conclude.ngrok-free.dev'],
   },
   build: {
-    minify: 'terser',
+    minify: 'esbuild',
     cssMinify: true,
     target: 'esnext',
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        } as Record<string, string[]>,
-      },
-    },
-    terserOptions: {
-      compress: {
-        drop_console: true,
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) return 'vendor'
+          }
+          return undefined
+        },
       },
     },
   },
