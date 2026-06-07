@@ -13,32 +13,32 @@ const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
 const FEATURES = [
   {
-    num: '01', highlight: true,
+    num: '01',
     title: 'Sub-50ms Latency',
     desc: 'Edge-deployed inference nodes in 30+ regions. Your AI responses arrive before users notice the wait.',
   },
   {
-    num: '02', highlight: false,
+    num: '02',
     title: 'Zero Lock-In',
     desc: 'OpenAI-compatible API surface. Swap providers, fine-tuned models, or hosting layers — your code stays the same.',
   },
   {
-    num: '03', highlight: false,
+    num: '03',
     title: 'Enterprise Security',
     desc: 'SOC-2 Type II ready. All data encrypted at rest and in transit. BYOK support. Private VPC deployment available.',
   },
   {
-    num: '04', highlight: true,
+    num: '04',
     title: 'Observability Stack',
     desc: 'Full token-level tracing, latency percentiles, cost attribution, and drift alerts — out of the box.',
   },
   {
-    num: '05', highlight: false,
+    num: '05',
     title: 'Visual Pipeline Builder',
     desc: 'Chain prompts, tools, and agents with a drag-and-drop canvas. No framework lock, pure JSON export.',
   },
   {
-    num: '06', highlight: false,
+    num: '06',
     title: 'Auto-Scaling',
     desc: 'From zero to thousands of concurrent requests with no cold starts. GPU spot markets managed automatically.',
   },
@@ -71,7 +71,7 @@ const AnimatedCounter = memo(function AnimatedCounter({ to }: { to: number }) {
 const FeatureRow = memo(function FeatureRow({ feature, index }: { feature: typeof FEATURES[0]; index: number }) {
   return (
     <motion.li
-      className={`feat__item ${feature.highlight ? 'feat__item--highlight' : ''}`}
+      className="feat__item"
       initial={{ opacity: 0, x: -32, filter: 'blur(8px)' }}
       whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, margin: '-40px' }}
