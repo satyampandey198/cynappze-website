@@ -210,6 +210,7 @@
   align-items: center;
   padding-left: 20px;
   overflow: visible;
+  flex-shrink: 0;
 }
 
 .hero__proof-avatar {
@@ -219,11 +220,10 @@
   object-fit: cover;
   background: #0f0f18;
   margin-left: 0;
+  flex-shrink: 0;
 }
 
 .hero__proof-avatar + .hero__proof-avatar { margin-left: -12px; }
-
-.hero__proof-avatar:last-child { margin-left: 0; }
 
 .hero__proof-text {
   font-size: var(--text-sm);
@@ -323,24 +323,26 @@
   }
 
   .hero__proof {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: var(--space-4);
-    text-align: center;
+    gap: var(--space-3);
+    text-align: left;
   }
 
   .hero__proof-avatars {
-    justify-content: center;
-    padding-left: 0;
+    justify-content: flex-start;
+    padding-left: 12px;
+    flex-shrink: 0;
   }
 
   .hero__proof-text {
-    text-align: center;
+    text-align: left;
   }
 
   .hero__proof-avatar {
     width: 36px; height: 36px;
     margin-left: 0;
+    flex-shrink: 0;
   }
 
   .hero__proof-avatar + .hero__proof-avatar { margin-left: -8px; }
