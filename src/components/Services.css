@@ -2,7 +2,8 @@
 .services {
   position: relative;
   z-index: var(--z-content);
-  padding-block: clamp(5rem, 10vw, 9rem);
+  padding-top: clamp(5rem, 10vw, 9rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
   background: rgba(10, 10, 15, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);

@@ -16,19 +16,6 @@ const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
 const PLANS = [
   {
-    id: 'solo', label: 'SOLO', highlight: false,
-    price: { monthly: 0, annual: 0 },
-    desc: 'For individuals exploring AI-powered workflows.',
-    cta: 'Start Free',
-    features: [
-      '1 active agent',
-      '100K tokens / month',
-      'Foundation model API access',
-      'Community support',
-      '1 deployment region',
-    ],
-  },
-  {
     id: 'pro', label: 'PRO', highlight: true,
     price: { monthly: 49, annual: 39 },
     desc: 'For developers and small teams shipping fast.',

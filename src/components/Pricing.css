@@ -105,9 +105,11 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   align-items: stretch;
+  max-width: 840px;
+  margin-inline: auto;
 }
 
 /* ── Pricing card ── */
@@ -302,19 +304,6 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 1024px) {
-  .pricing__grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .price__card:last-child {
-    grid-column: span 2;
-    max-width: 480px;
-    margin-inline: auto;
-    width: 100%;
-  }
-}
-
 @media (max-width: 640px) {
   .pricing__grid {
     grid-template-columns: 1fr;

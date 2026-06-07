@@ -112,13 +112,7 @@ const Hero = memo(function Hero() {
         aria-hidden="true"
       />
 
-      {/* Scan line */}
-      <motion.div
-        className="hero__scan"
-        animate={{ y: ['-100%', '200%'] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'linear', repeatDelay: 3 }}
-        aria-hidden="true"
-      />
+
 
       <div className="container">
         <motion.div

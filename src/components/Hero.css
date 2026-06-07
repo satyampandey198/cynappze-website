@@ -40,19 +40,6 @@
   z-index: 0;
 }
 
-/* Scan line */
-.hero__scan {
-  position: absolute;
-  left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg,
-    transparent 0%, rgba(0,212,255,0.3) 40%,
-    rgba(0,212,255,0.6) 50%,
-    rgba(0,212,255,0.3) 60%, transparent 100%);
-  pointer-events: none;
-  z-index: 1;
-  filter: blur(0.5px);
-}
 
 /* ── Inner ── */
 .hero__inner {
@@ -126,7 +113,7 @@
   display: flex;
   align-items: center;
   gap: 0.28em;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   overflow: visible; /* ✅ FIX 1 — don't clip the rotating word */
 }
 
@@ -149,9 +136,10 @@
 }
 
 .hero__rotating-word {
-  position: absolute;
-  left: 0;
+  position: relative;
+  display: inline-block;
   white-space: nowrap; /* ✅ FIX 3 — never wrap, always show full word */
+  padding-right: 0.18em;
   background: linear-gradient(135deg, var(--c-cyan), var(--c-violet));
   -webkit-background-clip: text;
   background-clip: text;

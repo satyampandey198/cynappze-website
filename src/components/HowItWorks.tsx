@@ -65,8 +65,8 @@ console.log(deployment.url)
 
 const HowItWorks = memo(function HowItWorks() {
   const sectionRef = useRef<HTMLElement>(null)
-  const headRef    = useRef<HTMLDivElement>(null)
-  const inView     = useInView(headRef, { once: true, margin: '-80px' })
+  const headRef = useRef<HTMLDivElement>(null)
+  const inView = useInView(headRef, { once: true, margin: '-80px' })
 
   const copyTimeoutRef = useRef<number | null>(null)
 
@@ -77,8 +77,8 @@ const HowItWorks = memo(function HowItWorks() {
     target: sectionRef,
     offset: ['start end', 'end start'],
   })
-  const leftY       = useTransform(scrollYProgress, [0, 1], [50, -50])
-  const rightY      = useTransform(scrollYProgress, [0, 1], [80, -80])
+  const leftY = useTransform(scrollYProgress, [0, 1], [50, -50])
+  const rightY = useTransform(scrollYProgress, [0, 1], [80, -80])
   const panelRotate = useTransform(scrollYProgress, [0, 0.5, 1], [2, 0, -2])
 
   useEffect(() => {
@@ -104,12 +104,12 @@ const HowItWorks = memo(function HowItWorks() {
   }, [])
 
   const stepVariants: Variants = {
-    hidden:  {},
+    hidden: {},
     visible: { transition: { staggerChildren: 0.1 } },
   }
 
   const stepItem: Variants = {
-    hidden:  { opacity: 0, x: -28, filter: 'blur(6px)' },
+    hidden: { opacity: 0, x: -28, filter: 'blur(6px)' },
     visible: {
       opacity: 1, x: 0, filter: 'blur(0px)',
       transition: { duration: 0.65, ease: EASE_OUT },
@@ -129,7 +129,7 @@ const HowItWorks = memo(function HowItWorks() {
         >
           <span className="s-label">The Process</span>
           <h2 className="s-title hiw__title">
-            From API key to<br /><em>production</em> in four steps
+            From Ideas to<br /><em>Production</em> in Four Steps
           </h2>
         </motion.div>
 
@@ -167,7 +167,7 @@ const HowItWorks = memo(function HowItWorks() {
                       className="hiw__step-chevron"
                       animate={{
                         rotate: active === i ? 45 : 0,
-                        color:  active === i ? 'var(--c-cyan)' : 'var(--c-text-faint)',
+                        color: active === i ? 'var(--c-cyan)' : 'var(--c-text-faint)',
                       }}
                       transition={{ duration: 0.35, ease: EASE_OUT }}
                       aria-hidden="true"
@@ -261,7 +261,7 @@ const HowItWorks = memo(function HowItWorks() {
                 <motion.pre
                   key={active}
                   initial={{ opacity: 0, y: 14, filter: 'blur(8px)' }}
-                  animate={{ opacity: 1, y: 0,  filter: 'blur(0px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -12, filter: 'blur(6px)' }}
                   transition={{ duration: 0.4, ease: EASE_OUT }}
                 >
@@ -277,9 +277,9 @@ const HowItWorks = memo(function HowItWorks() {
                   className="hiw__pip"
                   onClick={() => handleStep(i)}
                   animate={{
-                    width:      i === active ? 40 : 20,
+                    width: i === active ? 40 : 20,
                     background: i === active ? 'var(--c-cyan)' : 'var(--c-text-faint)',
-                    opacity:    i === active ? 1 : 0.4,
+                    opacity: i === active ? 1 : 0.4,
                   }}
                   transition={{ duration: 0.35, ease: EASE_OUT }}
                   aria-label={`Step ${i + 1}`}
