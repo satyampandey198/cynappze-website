@@ -223,7 +223,6 @@
 
 .hero__proof-avatar + .hero__proof-avatar { margin-left: -12px; }
 
-.hero__proof-avatar:last-child { margin-left: 0; }
 
 .hero__proof-text {
   font-size: var(--text-sm);
